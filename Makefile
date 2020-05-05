@@ -19,7 +19,7 @@ OBJ = $(patsubst ./src/%,$(ODIR)/%,$(_OBJ))
 DEP = $(OBJ:.o=.d)  # one dependency file for each source
 
 LDFLAGS = $(libincl) $(LIBS) $(libgl)
-CXXFLAGS = -g -I$(IDIR) $(incl)
+CXXFLAGS = -Wall -g -I$(IDIR) $(incl)
 
 
 # DON'T EDIT BELOW THIS LINE

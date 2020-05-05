@@ -1,4 +1,6 @@
 CC = gcc -std=c11
+
+DISTDIR = ./dist/
 NAME = roparm
 
 ODIR = build
@@ -46,7 +48,7 @@ $(ODIR)/%.o: src/%.c
 	$(CC) -c -o $@ $< $(CXXFLAGS)
 
 default: $(OBJ)
-	$(CC) $^ -o $(NAME) $(CXXFLAGS) $(LDFLAGS) && ./$(NAME)
+	$(CC) $^ -o $(DISTDIR)$(NAME) $(CXXFLAGS) $(LDFLAGS)
 
 .PHONY: $(NAME)
 $(NAME):
@@ -58,7 +60,7 @@ $(ODIR)/%.d: src/%.c
 
 .PHONY: clean
 clean:
-	rm -f $(ODIR)/*.o ./$(NAME)
+	rm -f $(ODIR)/*.o $(ODIR)/*.d ./$(NAME)
 .PHONY: cleandeps
 cleandeps:
 	rm -f $(ODIR)/*.d ./$(NAME)

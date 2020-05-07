@@ -10,6 +10,10 @@ LIBS = -l capstone.4
 
 MAC_LDIR = ./lib/darwin
 
+UBUNTU_LDIR = ./lib/ubuntu
+
+OTHER_LDIR = /usr/local/lib
+
 # WIN32_LDIR = ./lib/windows-x86
 # WIN64_LDIR = ./lib/windows-x64
 
@@ -18,7 +22,7 @@ _OBJ = $(SRC:.c=.o)
 OBJ = $(patsubst ./src/%,$(ODIR)/%,$(_OBJ))
 DEP = $(OBJ:.o=.d)  # one dependency file for each source
 
-LDFLAGS = $(libincl) $(LIBS) $(libgl)
+LDFLAGS = $(libincl) $(LIBS)
 CXXFLAGS = -Wall -g -I$(IDIR) $(incl)
 
 
@@ -38,8 +42,15 @@ ifeq ($(OS),Windows_NT)
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S), Darwin)
-		libgl = $(MAC_FRAMEWORKS) 
 		libincl = -L$(MAC_LDIR)
+	endif
+	ifeq ($(UNAME_S), Linux)
+		DIST := $(shell lsb_release -si)
+		ifeq ($(DIST), Ubuntu)
+			libincl = -L$(MAC_LDIR)
+		else
+			libincl = -L$(OTHER_LDIR)
+		endif
 	endif
 endif
 

@@ -78,10 +78,11 @@ int main(int argc, char **argv) {
     // 5. Report the gadgets to the user with their entry address
     print_gadgets(gadgets, gadget_count);
     // Clean up and Exit successfully
-    free(binary_buffer);
-    free(elf.bytes);
-    free(gadgets);
     cs_free(instructions, instruction_count);
-    free(return_instructions);
     cs_close(&handle);
+    free(binary_buffer);
+    free(return_instructions);
+    free(gadgets);
+
+    return 0;
 }

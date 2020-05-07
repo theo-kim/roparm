@@ -119,18 +119,59 @@ int find_return(csh handle, cs_insn *capstone_instructions, int instruction_coun
     return return_count;
 }
 
+int check_gadget(cs_insn *startpoint, int gadget_length, cs_insn **gadget_start) {
+    for (int i = 0; i < gadget_length; ++i) {
+        cs_insn *insn = startpoint - i;
+        if (insn->id == 0x00) {
+            // Not a valid instruction, therefore cannot be used for gadget
+            return i;        
+        }
+        *gadget_start = insn;
+    }
+    return gadget_length;
+}
+
 // Find gadgets based on the instructions found in the previous step,
 int find_gadgets(cs_insn **return_instructions, int instruction_n, int gadget_length, gadget_t **gadgets) {
+    int num_gadgets = 0;
+    // Malloc array    
+    *gadgets = (gadget_t *)malloc(instruction_n * sizeof(gadgets));
     // Go through each return instruction and count backwards
-    printf(CONSOLE_COLOR(ANSI_COLOR_BLUE, "Found %d instructions\n"), instruction_n);
+    printf(CONSOLE_COLOR(ANSI_COLOR_BLUE, "Found %d return-like instructions\n"), instruction_n);
     for (int i = 0; i < instruction_n; ++i) {
         cs_insn *insn = return_instructions[i];
-        printf(CONSOLE_COLOR(ANSI_COLOR_MAGENTA, "0x%" PRIx64) ":\t"CONSOLE_COLOR(ANSI_COLOR_YELLOW, "%s")"\t%s\n", insn->address, insn->mnemonic, insn->op_str);
+        cs_insn *gadget_start = NULL;
+        int gadget_len = 0;
+        if ((gadget_len = check_gadget(insn, gadget_length, &gadget_start)) == 0) {
+            continue;
+        }
+        (*gadgets)[i].gadget_len = gadget_len;
+        (*gadgets)[i].start = gadget_start;
+        (*gadgets)[i].is_thumb = 1;
+        ++num_gadgets;
+        // printf(CONSOLE_COLOR(ANSI_COLOR_MAGENTA, "0x%" PRIx64) ":\t"CONSOLE_COLOR(ANSI_COLOR_YELLOW, "%s")"\t%s\n", insn->address, insn->mnemonic, insn->op_str);
     }
-    return 0;
+    return num_gadgets;
 }
 
 // Print gadgets onto STDOUT
 void print_gadgets(gadget_t *gadgets, int number_gadgets) {
+    printf("Found %d gadgets\n", number_gadgets);
+    for (int i = 0; i < number_gadgets; ++i) {
+        cs_insn *insn = gadgets[i].start;
+        if (gadgets[i].is_thumb == 1) {
+            printf("[" CONSOLE_COLOR(ANSI_COLOR_GREEN, "THUMB")"]\t");
+        }
+        else {
+            printf("[" CONSOLE_COLOR(ANSI_COLOR_GREEN, "ARM")"]\t");
+        }
+        printf(CONSOLE_COLOR(ANSI_COLOR_MAGENTA, "0x%" PRIx64)": ", insn->address);
+        for (int j = 0; j < gadgets[j].gadget_len; ++j  ) {
+            cs_insn *insn = gadgets[i].start + j;
+            printf(CONSOLE_COLOR(ANSI_COLOR_YELLOW, "%s")" %s; ", insn->mnemonic, insn->op_str);
+        }
+        printf("\n");
+        // printf(":\t"CONSOLE_COLOR(ANSI_COLOR_YELLOW, "%s")"\t%s\n", insn->address, insn->mnemonic, insn->op_str);
+    }
     return;
 }

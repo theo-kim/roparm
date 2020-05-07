@@ -82,7 +82,9 @@ typedef struct {
 
 // Type for a gadget
 typedef struct {
-    
+    cs_insn *start;
+    int gadget_len;
+    int is_thumb;
 } gadget_t;
 
 // Parse arguments, return -1 is error, else return 0 if the filename

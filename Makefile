@@ -6,7 +6,7 @@ NAME = roparm
 ODIR = build
 
 IDIR = ./include/
-LIBS = -l capstone
+LIBS = -l capstone.4
 
 MAC_LDIR = ./lib/darwin
 

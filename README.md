@@ -12,7 +12,7 @@ To test the command with Docker make sure that you have Docker and installed and
 
 ```
 $ docker build --tag roparm .
-$ docker run roparm ./targets/<filename>
+$ docker run roparm -f ./targets/<filename> -l <gadget_length> -m <mode>
 ```
 
 ## Usage

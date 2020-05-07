@@ -6,7 +6,6 @@ NAME = roparm
 ODIR = build
 
 IDIR = ./include/
-LIBS = -l capstone.4
 
 MAC_LDIR = ./lib/darwin
 
@@ -21,10 +20,6 @@ SRC = $(wildcard ./src/*.c)
 _OBJ = $(SRC:.c=.o)
 OBJ = $(patsubst ./src/%,$(ODIR)/%,$(_OBJ))
 DEP = $(OBJ:.o=.d)  # one dependency file for each source
-
-LDFLAGS = $(libincl) $(LIBS)
-CXXFLAGS = -Wall -g -I$(IDIR) $(incl)
-
 
 # DON'T EDIT BELOW THIS LINE
 
@@ -43,16 +38,22 @@ else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S), Darwin)
 		libincl = -L$(MAC_LDIR)
+		LIBS = -l capstone.4
 	endif
 	ifeq ($(UNAME_S), Linux)
 		DIST := $(shell lsb_release -si)
 		ifeq ($(DIST), Ubuntu)
-			libincl = -L$(MAC_LDIR)
+			libincl = -L$(UBUNTU_LDIR)
+			LIBS = -l capstone
 		else
 			libincl = -L$(OTHER_LDIR)
+			LIBS = -l capstone
 		endif
 	endif
 endif
+
+LDFLAGS = $(libincl) $(LIBS)
+CXXFLAGS = -Wall -g -I$(IDIR) $(incl)
 
 $(ODIR)/%.o: src/%.c
 	if test -d $(ODIR); then echo ""; else mkdir build; fi

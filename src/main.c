@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 		return 2;
     }
     // Initialize Capstone Engine
-    if (elf.is_thumb == 1) {
+    if (args.thumb_mode == 1) {
         cs_mode = CS_MODE_THUMB;
     }
     else {
@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
     }
     // 4. Back track and search for more instructions from each return
     //    instruction to fulfill gadget requirement
-    gadget_count = find_gadgets(return_instructions, return_count, args.gadget_length, &gadgets);
+    gadget_count = find_gadgets(return_instructions, return_count, args.gadget_length, &gadgets, args.thumb_mode);
     if (gadget_count <= 0) { 
         fprintf(stderr, "Could not find any valid ROP gadget entries of the desired length.\n");
         return 5;

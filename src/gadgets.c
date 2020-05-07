@@ -1,19 +1,7 @@
 #include "roparm.h"
 #include "elf.h"
 
-// // Error reporting
-// static void print_string_hex(const char *comment, unsigned char *str, size_t len)
-// {
-// 	unsigned char *c;
-
-// 	printf("%s", comment);
-// 	for (c = str; c < str + len; c++) {
-// 		printf("0x%02x ", *c & 0xff);
-// 	}
-
-// 	printf("\n");
-// }
-
+// Error reporting
 void report_error(const char *msg) {
     fprintf(stderr, CONSOLE_COLOR(ANSI_COLOR_RED, "%s\n"), msg);
 }
@@ -69,7 +57,6 @@ int extract_text(uint8_t *binary_buffer, size_t buffer_len, elf_t *text_section)
         sheader_offset = header->e_shoff;
         sheader_count = header->e_shnum;
         sheader_size = header->e_shentsize;
-
         // Get section symbol table
         int indx = header->e_shstrndx;
         Elf32_Shdr *shstr_header = (void *)binary_buffer + sheader_offset + (indx * sheader_size);
@@ -79,14 +66,15 @@ int extract_text(uint8_t *binary_buffer, size_t buffer_len, elf_t *text_section)
             Elf32_Shdr *section_header = (void *)binary_buffer + sheader_offset + (i * sheader_size);
             if (section_header->sh_type == SHT_PROGBITS) {
                 char *section_name = symbol_table + section_header->sh_name;
+                printf("%s: %d\n", section_name, section_header->sh_type);
                 if (strncmp(section_name, ".text", 5) == 0) {
                     text_section->size = section_header->sh_size;
                     text_section->bytes = binary_buffer + section_header->sh_offset;
                     text_section->entry_address = section_header->sh_addr;
-                    return text_section->size;
                 }
             }
         }
+        return text_section->size;
     }
     report_error(ERROR_64BIT);
     return -1;
@@ -132,7 +120,7 @@ int check_gadget(cs_insn *startpoint, int gadget_length, cs_insn **gadget_start)
 }
 
 // Find gadgets based on the instructions found in the previous step,
-int find_gadgets(cs_insn **return_instructions, int instruction_n, int gadget_length, gadget_t **gadgets) {
+int find_gadgets(cs_insn **return_instructions, int instruction_n, int gadget_length, gadget_t **gadgets, int mode) {
     int num_gadgets = 0;
     // Malloc array    
     *gadgets = (gadget_t *)malloc(instruction_n * sizeof(gadgets));

@@ -8,6 +8,7 @@ int parse_arguments(int argc, char **argv, args_t *args) {
     args->filename = NULL;
     args->gadget_length = -1;
     args->start_address = 0x80001000;
+    args->thumb_mode = 1;
     // No instances that only one argument works
     if (argc == 1) {
         report_error(ERROR_INCORRECT_ARGS);

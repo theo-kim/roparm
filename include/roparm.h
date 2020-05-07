@@ -102,7 +102,7 @@ int extract_text(uint8_t *binary_buffer, size_t buffer_len, elf_t *text_section)
 int find_return(csh handle, cs_insn *capstone_instructions, int instruction_count, cs_insn ***return_instructions);
 
 // Find gadgets based on the instructions found in the previous step,
-int find_gadgets(cs_insn **return_instructions, int instruction_n, int gadget_length, gadget_t **gadgets);
+int find_gadgets(cs_insn **return_instructions, int instruction_n, int gadget_length, gadget_t **gadgets, int mode);
 
 // Print gadgets onto STDOUT
 void print_gadgets(gadget_t *gadgets, int number_gadgets);

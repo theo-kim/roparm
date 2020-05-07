@@ -66,15 +66,14 @@ int extract_text(uint8_t *binary_buffer, size_t buffer_len, elf_t *text_section)
             Elf32_Shdr *section_header = (void *)binary_buffer + sheader_offset + (i * sheader_size);
             if (section_header->sh_type == SHT_PROGBITS) {
                 char *section_name = symbol_table + section_header->sh_name;
-                printf("%s: %d\n", section_name, section_header->sh_type);
                 if (strncmp(section_name, ".text", 5) == 0) {
                     text_section->size = section_header->sh_size;
                     text_section->bytes = binary_buffer + section_header->sh_offset;
                     text_section->entry_address = section_header->sh_addr;
+                    return text_section->size;
                 }
             }
         }
-        return text_section->size;
     }
     report_error(ERROR_64BIT);
     return -1;

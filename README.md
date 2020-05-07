@@ -7,6 +7,14 @@ This is a ROP Gadget Finder utility for the ARM architecture.
 ## Building from Source
 You can also build the project from source. **Windows is not supported.** To do so, just run `make` in the project root. For macOS and Ubuntu, a compiled version of capstone comes with the project. Alternatively, if you have Capstone Engine installed to a PATH visible library directory, the Makefile will use that too.
 
+## Testing with Docker
+To test the command with Docker make sure that you have Docker and installed and accessible via the terminal. The Docker image is based on Ubuntu. Place all binaries that you want to test on in the `test` directory. You can use the following commands:
+
+```
+$ docker build --tag roparm .
+$ docker run roparm ./targets/<filename>
+```
+
 ## Usage
 The purpose of ROPARM is to find and report Return Object Programming Gadgets from a ELF binary to the user to be used in penetration testing of embedded binaries. Right now, it ONLY works on ELF binaries, not raw assembled ARM code. It ONLY works on ARM (ARM or THUMB).
 
